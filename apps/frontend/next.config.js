@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'export',
   trailingSlash: true,
-  assetPrefix: process.env.NEXT_PUBLIC_ASSET_PREFIX || '',
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
   images: {
     unoptimized: true,
     remotePatterns: [
