@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  passwordHash  String
+  displayName   String?
+  avatar        String?
+  bio           String?
+  role          Role      @default(USER)
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  authoredComics   Comic[]        @relation("ComicAuthor")
+  artistedComics   Comic[]        @relation("ComicArtist")
+  favorites        UserFavorite[]
+  likes            Like[]
+  comments         Comment[]
+  history          ReadingHistory[]
+  reports          Report[]
+  adminActions     AdminAction[]
+  targetAdminActions AdminAction[] @relation("AdminActionTarget")
+  reviewedReports  Report[]       @relation("ReportReviewer")
+
+  @@map("users")
+}
+
+model Comic {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  coverImage   String?
+  authorId     String
+  artistId     String?
+  status       ComicStatus @default(DRAFT)
+  ageRating    String?
+  language     String    @default("es")
+  views        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  author       User       @relation("ComicAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  artist       User?      @relation("ComicArtist", fields: [artistId], references: [id])
+  chapters     Chapter[]
+  genres       ComicGenre[]
+  tags         ComicTag[]
+  favorites    UserFavorite[]
+  likes        Like[]
+  comments     Comment[]
+  history      ReadingHistory[]
+  reports      Report[]
+
+  @@map("comics")
+}
+
+model Genre {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  description String?
+  createdAt DateTime  @default(now())
+
+  comics    ComicGenre[]
+
+  @@map("genres")
+}
+
+model ComicGenre {
+  id        String @id @default(cuid())
+  comicId   String
+  genreId   String
+  createdAt DateTime @default(now())
+
+  comic     Comic  @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  genre     Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([comicId, genreId])
+  @@map("comic_genres")
+}
+
+model Tag {
+  id        String @id @default(cuid())
+  name      String @unique
+  slug      String @unique
+  createdAt DateTime @default(now())
+
+  comics    ComicTag[]
+
+  @@map("tags")
+}
+
+model ComicTag {
+  id        String @id @default(cuid())
+  comicId   String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  comic     Comic @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  tag       Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([comicId, tagId])
+  @@map("comic_tags")
+}
+
+model Chapter {
+  id            String    @id @default(cuid())
+  comicId       String
+  title         String
+  chapterNumber Int
+  coverImage    String?
+  isPublished   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  comic         Comic    @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  pages         Page[]
+
+  @@unique([comicId, chapterNumber])
+  @@map("chapters")
+}
+
+model Page {
+  id         String   @id @default(cuid())
+  chapterId  String
+  imageUrl   String
+  pageNumber Int
+  createdAt  DateTime @default(now())
+
+  chapter    Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, pageNumber])
+  @@map("pages")
+}
+
+model UserFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  comicId   String
+  createdAt DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic     Comic   @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comicId])
+  @@map("user_favorites")
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  comicId   String
+  createdAt DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic     Comic   @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comicId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  comicId   String
+  content   String
+  createdAt DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic     Comic   @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model ReadingHistory {
+  id            String   @id @default(cuid())
+  userId        String
+  comicId       String
+  chapterId     String
+  lastPageNumber Int
+  progress      Float    @default(0)
+  lastReadAt    DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comic         Comic   @relation(fields: [comicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, comicId, chapterId])
+  @@map("reading_history")
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  reporterId  String
+  comicId     String?
+  chapterId   String?
+  reason      String
+  description String?
+  status      ReportStatus @default(PENDING)
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime     @default(now())
+
+  reporter    User        @relation(fields: [reporterId], references: [id])
+  reviewer    User?       @relation("ReportReviewer", fields: [reviewedBy], references: [id])
+  comic       Comic?      @relation(fields: [comicId], references: [id])
+
+  @@map("reports")
+}
+
+model AdminAction {
+  id           String      @id @default(cuid())
+  adminId      String
+  targetUserId String?
+  targetComicId String?
+  action       AdminActionType
+  reason       String?
+  createdAt    DateTime    @default(now())
+
+  admin        User        @relation(fields: [adminId], references: [id])
+  targetUser   User?       @relation("AdminActionTarget", fields: [targetUserId], references: [id])
+
+  @@map("admin_actions")
+}
+
+model Advertisement {
+  id          String    @id @default(cuid())
+  name        String
+  placement   AdPlacement
+  imageUrl    String
+  linkUrl     String?
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean   @default(true)
+  impressions Int       @default(0)
+  clicks      Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  @@map("advertisements")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum ComicStatus {
+  DRAFT
+  PENDING
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  REJECTED
+}
+
+enum AdminActionType {
+  SUSPEND_USER
+  REACTIVATE_USER
+  DELETE_USER
+  HIDE_COMIC
+  DELETE_COMIC
+  APPROVE_COMIC
+  REJECT_COMIC
+  DELETE_COMMENT
+}
+
+enum AdPlacement {
+  HOME
+  READER
+  SIDEBAR
+}

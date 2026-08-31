@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: 'Cinzel', 'Georgia', serif;
+    --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-master-950 text-master-200 font-body antialiased;
+    background-image: radial-gradient(circle at 20% 10%, rgba(220, 38, 38, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(185, 28, 28, 0.08) 0%, transparent 40%);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-master-500 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-master-500 text-white hover:bg-master-400;
+  }
+  .btn-secondary {
+    @apply btn border border-master-700 text-master-200 hover:bg-master-800 hover:text-master-100;
+  }
+  .card {
+    @apply rounded-lg border border-master-800 bg-master-900/60 backdrop-blur-sm;
+  }
+  .input {
+    @apply w-full rounded-md border border-master-800 bg-master-900 px-3 py-2 text-sm text-master-200 placeholder:text-master-600 focus:border-master-500 focus:outline-none;
+  }
+  .link {
+    @apply text-master-400 hover:text-master-300 underline-offset-4 hover:underline;
+  }
+  .title-display {
+    @apply font-display text-2xl font-bold text-master-100 tracking-wide;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

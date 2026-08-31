@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+packages/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Prisma
+prisma/*.db
+*.db
+*.db-journal
+.prisma*
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Coverage
+coverage/
+
+# Docker
+docker-compose.override.yml
+
+# Uploads (local uploads - don't commit)
+uploads/*
+!uploads/.gitkeep
+
+# TypeScript
+*.tsbuildinfo
+
+*.tmp
