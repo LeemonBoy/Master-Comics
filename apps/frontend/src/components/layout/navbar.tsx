@@ -27,13 +27,10 @@ export function Navbar() {
               <Link href="/user/favorites" className="link">
                 Favoritos
               </Link>
-              <Link href="/user/my-comics" className="link">
-                Mis cómics
-              </Link>
-              <Link href="/user/reports" className="link">
-                Reportar
-              </Link>
-              {user?.role === 'ADMIN' && (
+               <Link href="/user/my-comics" className="link">
+                 Mis cómics
+               </Link>
+               {user?.role === 'ADMIN' && (
                 <>
                   <Link href="/admin" className="link text-cosmic-500">
                     Panel
