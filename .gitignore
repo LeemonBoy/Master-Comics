@@ -46,7 +46,8 @@ coverage/
 docker-compose.override.yml
 
 # Uploads (local uploads - don't commit)
-uploads/*
+uploads/
+**/uploads/
 !uploads/.gitkeep
 
 # TypeScript
