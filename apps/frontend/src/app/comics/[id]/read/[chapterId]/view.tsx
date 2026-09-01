@@ -252,7 +252,7 @@ export default function ReaderView({ comicId, chapterId }: { comicId: string; ch
             <button onClick={() => setZoom((z) => Math.min(z + 0.25, 3))} className="btn btn-secondary whitespace-nowrap">Zoom +</button>
             <button onClick={() => setZoom((z) => Math.max(z - 0.25, 0.5))} className="btn btn-secondary whitespace-nowrap">Zoom -</button>
             <button onClick={resetView} className="btn btn-secondary whitespace-nowrap">Reset</button>
-            <button onClick={toggleFullscreen} className="btn btn-secondary whitespace-nowrap">?</button>
+            <button onClick={toggleFullscreen} className="btn btn-secondary whitespace-nowrap">{isFullscreen ? 'Salir' : 'Pantalla completa'}</button>
             <button onClick={() => setShowControls(false)} className="btn btn-secondary whitespace-nowrap">Ocultar</button>
           </div>
         </div>
