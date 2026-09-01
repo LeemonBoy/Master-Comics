@@ -88,9 +88,12 @@ export default function ReaderView({ comicId, chapterId }: { comicId: string; ch
     const visitedKey = `visited-comic-${comicId}`;
     const alreadyVisited = sessionStorage.getItem(visitedKey);
     if (!alreadyVisited) {
+      sessionStorage.setItem(visitedKey, '1');
       ComicsService.incrementViews(comicId)
-        .then(() => sessionStorage.setItem(visitedKey, '1'))
-        .catch((err) => console.error('Error incrementando vistas:', err));
+        .catch((err) => {
+          sessionStorage.removeItem(visitedKey);
+          console.error('Error incrementando vistas:', err);
+        });
     }
   }, [comicId]);
 
