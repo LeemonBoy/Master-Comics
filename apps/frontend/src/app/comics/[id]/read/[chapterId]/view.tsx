@@ -272,8 +272,8 @@ export default function ReaderView({ comicId, chapterId }: { comicId: string; ch
           <button onClick={() => setShowControls(true)} className="btn btn-primary">Controles</button>
           {showMiniControls && (
             <div className="absolute bottom-12 right-0 flex gap-2 bg-cosmic-900/95 border border-cosmic-700 p-2 rounded-md shadow-lg backdrop-blur">
-              <button onClick={() => { if (currentPage > 0) prevPage(); }} className="btn btn-secondary text-xs">?</button>
-              <button onClick={() => { if (currentPage < pages.length - 1) nextPage(); }} className="btn btn-secondary text-xs">?</button>
+              <button onClick={() => { if (currentPage > 0) prevPage(); }} className="btn btn-secondary text-xs">{'<--'}</button>
+              <button onClick={() => { if (currentPage < pages.length - 1) nextPage(); }} className="btn btn-secondary text-xs">{'-->'}</button>
               <button onClick={() => setZoom((z) => Math.min(z + 0.25, 3))} className="btn btn-secondary text-xs">+</button>
               <button onClick={() => setZoom((z) => Math.max(z - 0.25, 0.5))} className="btn btn-secondary text-xs">-</button>
             </div>
